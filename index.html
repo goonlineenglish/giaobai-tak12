@@ -141,7 +141,7 @@
         </div>
         <div class="full quickfill"><label>Áp nhanh Số câu (Min Question) cho mọi bài</label>
           <div class="qf-row"><input type="number" id="qfMin" min="0" placeholder="vd 30"><button class="btn" id="qfApply">Áp tất cả</button></div>
-          <div class="qf-note">Master Level tự = Số câu; sửa riêng từng bài ở danh sách dưới. Quy tắc: Master ≤ Số câu.</div>
+          <div class="qf-note">Master Level mặc định = 0; sửa riêng từng bài ở danh sách dưới.</div>
         </div>
       </div>
       <div class="citems" id="cartItems"><div class="empty">Chưa chọn bài nào.<br>Tích chọn ở danh sách bên trái.</div></div>
@@ -306,7 +306,7 @@ function render(){
 }
 
 // ====== Cart ======
-function toggle(it){ const k=cartKey(it); if(cart.has(k))cart.delete(k); else cart.set(k,{item:it,dsId:DS.id,dsLabel:DS.label,min:defMin,master:defMin,mt:false}); render(); }
+function toggle(it){ const k=cartKey(it); if(cart.has(k))cart.delete(k); else cart.set(k,{item:it,dsId:DS.id,dsLabel:DS.label,min:defMin,master:'0'}); render(); }
 function renderCart(){
   $('#cartN').textContent = cart.size;
   const host = $('#cartItems'); host.innerHTML='';
@@ -321,11 +321,11 @@ function renderCart(){
       const c = el('div','citem');
       c.innerHTML = '<div class="ctop"><div class="t">'+badge(catOf(it))+' '+esc(it.title)+'</div><button class="rm" title="Bỏ">×</button></div>'+
         '<div class="cfg"><label>Số câu <input type="number" class="cmin" min="0" value="'+esc(v.min)+'" placeholder="—"></label>'+
-        '<label>Master <input type="number" class="cmaster" min="0" value="'+esc(v.master)+'" placeholder="= Số câu"></label></div>';
+        '<label>Master <input type="number" class="cmaster" min="0" value="'+esc(v.master)+'" placeholder="0"></label></div>';
       c.querySelector('.rm').onclick=()=>{ cart.delete(key); render(); };
       const minI=c.querySelector('.cmin'), masI=c.querySelector('.cmaster');
-      minI.oninput=()=>{ v.min=minI.value; if(!v.mt){ v.master=v.min; masI.value=v.min; } else if(v.min!=='' && v.master!=='' && Number(v.master)>Number(v.min)){ v.master=v.min; masI.value=v.min; } };
-      masI.oninput=()=>{ v.mt=true; let x=masI.value; if(v.min!=='' && x!=='' && Number(x)>Number(v.min)){ x=v.min; masI.value=x; toast('Master ≤ Số câu ('+v.min+')'); } v.master=x; };
+      minI.oninput=()=>{ v.min=minI.value; };
+      masI.oninput=()=>{ v.master=masI.value; };
       host.appendChild(c);
     }
   }
@@ -418,13 +418,13 @@ function initDatasets(){
 $('#q').oninput=e=>{ filters.q=e.target.value.trim(); render(); };
 $('#viewSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b)return; view=b.dataset.v; [...$('#viewSeg').children].forEach(x=>x.classList.toggle('on',x===b)); render(); };
 $('#clearFilters').onclick=()=>{ filters.q=''; $('#q').value=''; ['units','skills','types','areas','exams','free'].forEach(k=>filters[k].clear()); render(); };
-$('#selAll').onclick=()=>{ DS.items.filter(passes).forEach(it=>{ const k=cartKey(it); if(!cart.has(k)) cart.set(k,{item:it,dsId:DS.id,dsLabel:DS.label,min:defMin,master:defMin,mt:false}); }); render(); toast('Đã chọn tất cả đang hiển thị'); };
+$('#selAll').onclick=()=>{ DS.items.filter(passes).forEach(it=>{ const k=cartKey(it); if(!cart.has(k)) cart.set(k,{item:it,dsId:DS.id,dsLabel:DS.label,min:defMin,master:'0'}); }); render(); toast('Đã chọn tất cả đang hiển thị'); };
 $('#cartClear').onclick=()=>{ cart.clear(); render(); };
 $('#sStart').onchange=e=>batch.start=e.target.value;
 $('#sDue').onchange=e=>batch.due=e.target.value;
 $('#sByDate').onchange=e=>batch.byDate=e.target.value;
 $('#qfMin').oninput=e=>defMin=e.target.value;
-$('#qfApply').onclick=()=>{ if(!cart.size) return toast('Giỏ trống'); for(const v of cart.values()){ v.min=defMin; v.master=defMin; v.mt=false; } renderCart(); toast('Đã áp Số câu='+(defMin||'(trống)')+' cho '+cart.size+' bài'); };
+$('#qfApply').onclick=()=>{ if(!cart.size) return toast('Giỏ trống'); for(const v of cart.values()){ v.min=defMin; } renderCart(); toast('Đã áp Số câu='+(defMin||'(trống)')+' cho '+cart.size+' bài'); };
 $('#copyLinks').onclick=copyLinks;
 $('#exportXlsx').onclick=exportXlsx;
 $('#foot').textContent='Nguồn: TAK12 · AZVocab · YouTube. Công cụ chạy offline, dữ liệu nhúng sẵn trong file này.';
