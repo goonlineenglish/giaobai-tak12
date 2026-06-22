@@ -121,6 +121,17 @@
   .empty{color:var(--muted);text-align:center;padding:26px 10px;font-size:13px}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1f2433;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow);opacity:0;transition:.25s;pointer-events:none;z-index:50}
   .toast.show{opacity:1}
+  .help-modal{display:none;position:fixed;inset:0;z-index:70;background:rgba(15,15,40,.5);align-items:center;justify-content:center;padding:16px}
+  .help-modal.open{display:flex}
+  .help-card{background:#fff;max-width:560px;width:100%;max-height:88vh;overflow:auto;border-radius:14px;box-shadow:var(--shadow);padding:18px 20px}
+  .help-card h2{margin:0 0 4px;font-size:18px;color:var(--brand)}
+  .help-card .sub2{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+  .help-card ol{margin:0;padding-left:20px}
+  .help-card li{margin-bottom:9px;font-size:13.5px;line-height:1.5}
+  .help-card .note{margin-top:12px;background:#f7f7fc;border-radius:8px;padding:10px 12px;font-size:12.5px;color:#4b5163}
+  .help-card .note b{color:var(--warn)}
+  .help-card .hc-close{float:right;border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-weight:700}
+  .help-card .kbtn{display:inline-block;background:var(--brand-soft);color:var(--brand);border-radius:6px;padding:0 6px;font-weight:700}
   .foot{margin-top:18px;font-size:11px;color:var(--muted);text-align:center}
   @media(max-width:920px){
     .layout{grid-template-columns:1fr}
@@ -160,6 +171,7 @@
     <button data-v="unit">Xem theo Unit</button>
   </div>
   <button class="btn ghost" id="clearFilters">Xoá lọc</button>
+  <button class="btn ghost" id="helpBtn">📖 Hướng dẫn</button>
 </div></div>
 </div>
 
@@ -195,6 +207,23 @@
 <div class="cart-backdrop" id="cartBackdrop"></div>
 <button class="fab" id="fab">🛒 Giỏ <b id="fabN">0</b></button>
 <button class="totop" id="toTop" title="Lên đầu trang" aria-label="Lên đầu trang">↑</button>
+<div class="help-modal" id="helpModal">
+  <div class="help-card">
+    <button class="hc-close" id="helpClose">✕</button>
+    <h2>📖 Hướng dẫn dùng nhanh</h2>
+    <div class="sub2">Tra cứu nội dung TAK12 → chọn bài → tải Excel → nạp lên TAK12.</div>
+    <ol>
+      <li><b>Chọn chương trình</b> ở góc trên-phải: lớp 6–9 (Global Success) hoặc Cambridge Movers/Flyers/KET/PET/FCE.</li>
+      <li><b>Tìm bài</b>: gõ tên bài / chủ đề vào ô tìm kiếm, hoặc bấm chip lọc <span class="kbtn">Unit</span> <span class="kbtn">Kỹ năng</span> <span class="kbtn">Loại</span> <span class="kbtn">Khu vực</span> <span class="kbtn">Đề thi</span>. Bấm <b>Xem theo Unit</b> để xem theo mạch bài từng Unit.</li>
+      <li><b>Chọn bài</b>: tích ô vuông ở mỗi bài → bài rơi vào <b>phiên đang chọn</b> trong Giỏ. (Điện thoại: bấm nút <b>🛒 Giỏ</b> ở góc phải để mở Giỏ.)</li>
+      <li><b>Phiên giao bài</b>: mỗi phiên là 1 đợt giao có <b>Ngày giao / Hạn nộp</b> riêng. Bấm <b>＋ Phiên</b> để thêm đợt; bấm tab phiên để chuyển qua lại. Ngày giao mặc định = hôm nay (sửa được).</li>
+      <li><b>Số câu</b>: mỗi bài có ô <b>Số câu</b> (yêu cầu hoàn thành) và <b>Master</b>; hoặc dùng ô <b>Áp Số câu cho cả phiên</b>.</li>
+      <li><b>Tải Excel</b>: bấm <b>⬇ Tải Excel import</b> — 1 file gồm tất cả phiên (mỗi bài tự mang ngày của phiên).</li>
+      <li><b>Nạp lên TAK12</b>: vào <b>school.tak12.com</b> → Giao bài → <b>Nhập b/tập</b> → <b>chọn Lớp + Môn</b> → tải lên file Excel vừa xuất.</li>
+    </ol>
+    <div class="note"><b>Lưu ý:</b> Mỗi lần "Nhập b/tập" trên TAK12 chỉ cho <b>1 Lớp + 1 Môn</b> → không trộn nhiều khối trong cùng 1 lần nạp. Nhãn <b>Miễn phí</b> = đề test đầu vào (HS làm thử, không cần tài khoản Pro). Nút <b>↑</b> góc dưới-trái để lên đầu trang.</div>
+  </div>
+</div>
 
 <script>
 // ====== DATA (được build.mjs nhúng) ======
@@ -515,6 +544,9 @@ const toTop=$('#toTop');
 const onScroll=()=>toTop.classList.toggle('show', window.scrollY>300);
 window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
 toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+$('#helpBtn').onclick=()=>$('#helpModal').classList.add('open');
+$('#helpClose').onclick=()=>$('#helpModal').classList.remove('open');
+$('#helpModal').onclick=e=>{ if(e.target.id==='helpModal') $('#helpModal').classList.remove('open'); };
 </script>
 </body>
 </html>
