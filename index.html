@@ -20,7 +20,9 @@
   header .ds{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   header select{padding:7px 10px;border-radius:8px;border:0;font-size:13px;background:#fff;color:var(--ink)}
   .wrap{max-width:1280px;margin:0 auto;padding:16px 20px 60px}
-  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .topbar{position:sticky;top:0;z-index:40}
+  .toolbar-wrap{background:var(--bg);border-bottom:1px solid var(--line);box-shadow:0 3px 10px rgba(20,20,50,.06)}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;max-width:1280px;margin:0 auto;padding:10px 20px}
   .search{flex:1;min-width:220px;position:relative}
   .search input{width:100%;padding:10px 12px 10px 34px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff}
   .search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.5}
@@ -42,7 +44,12 @@
   .chip .n{opacity:.6;font-size:11px;margin-left:4px}
   .chip.on .n{opacity:.85}
   .layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
-  @media(max-width:920px){.layout{grid-template-columns:1fr}.cart{position:static!important}}
+  .fab{display:none}
+  .totop{position:fixed;left:16px;bottom:16px;z-index:50;width:46px;height:46px;border-radius:50%;border:0;background:var(--brand);color:#fff;font-size:22px;font-weight:700;box-shadow:0 6px 18px rgba(91,61,245,.4);cursor:pointer;display:none;align-items:center;justify-content:center}
+  .totop.show{display:flex}
+  .totop:hover{filter:brightness(1.08)}
+  .cart-backdrop{display:none}
+  .cart-close{display:none}
   .results-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
   .results-head .count{font-weight:700}
   .list{display:flex;flex-direction:column;gap:8px}
@@ -63,7 +70,7 @@
   .tag.free{background:#dcfce7;color:#15803d;font-weight:700}
   .open{flex:0 0 auto;color:var(--muted);text-decoration:none;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:4px 8px}
   .open:hover{color:var(--brand);border-color:var(--brand)}
-  .cart{position:sticky;top:14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .cart{position:sticky;top:calc(var(--topbar-h,80px) + 12px);max-height:calc(100vh - var(--topbar-h,80px) - 24px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
   .cart .ch{background:var(--brand-soft);padding:11px 13px;display:flex;align-items:center;gap:8px}
   .cart .ch b{color:var(--brand)} .cart .ch .x{margin-left:auto}
   .cart .settings{padding:11px 13px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -82,6 +89,28 @@
   .citem .cfg label{font-size:11px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:4px;margin:0}
   .citem .cfg input{width:58px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;background:#fff}
   .cart .cgrp{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-soft);padding:4px 8px;border-radius:6px;margin:4px 2px 2px}
+  .ses{border:1px solid var(--line);border-radius:10px;margin:8px;overflow:hidden}
+  .ses.act{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand)}
+  .ses-h{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f7f7fc;cursor:pointer;font-size:12.5px;font-weight:700}
+  .ses.act .ses-h{background:var(--brand-soft);color:var(--brand)}
+  .ses-h .ses-t{flex:1}
+  .ses-cfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
+  .ses-cfg label{font-size:11px;color:var(--muted);font-weight:600}
+  .ses-cfg .full{grid-column:1/-1}
+  .ses-cfg input,.ses-cfg select{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;margin-top:2px}
+  .ses-cfg .qf2{display:flex;gap:6px;align-items:end}
+  .ses-cfg .qf2 input{flex:1}
+  .ses-items{max-height:32vh;overflow:auto;padding:2px 8px 8px;border-top:1px dashed var(--line)}
+  .addses{padding:0 8px 8px} .addses .btn{width:100%}
+  .ses-tabs{display:flex;gap:3px;overflow-x:auto;padding:8px 8px 0}
+  .ses-tab{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-bottom:0;background:#eef0f7;border-radius:8px 8px 0 0;padding:6px 10px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
+  .ses-tab.act{background:#fff;color:var(--brand);border-color:var(--brand)}
+  .ses-tab .cnt{background:#fff;color:var(--muted);border:1px solid var(--line);border-radius:999px;font-size:10px;padding:0 6px}
+  .ses-tab.act .cnt{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .ses-tab .tx{font-size:14px;line-height:1;opacity:.55}
+  .ses-tab .tx:hover{opacity:1;color:var(--youtube)}
+  .ses-addtab{border:1px dashed var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--brand);white-space:nowrap}
+  .ses-panel{border:1px solid var(--brand);border-radius:0 10px 10px 10px;margin:0 8px 8px}
   .quickfill{background:#f7f7fc;border-radius:8px;padding:8px}
   .quickfill .qf-row{display:flex;gap:6px}
   .quickfill .qf-row input{flex:1}
@@ -93,9 +122,24 @@
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1f2433;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow);opacity:0;transition:.25s;pointer-events:none;z-index:50}
   .toast.show{opacity:1}
   .foot{margin-top:18px;font-size:11px;color:var(--muted);text-align:center}
+  @media(max-width:920px){
+    .layout{grid-template-columns:1fr}
+    .filters{max-height:40vh;overflow:auto}
+    .cart{position:fixed;left:0;right:0;bottom:0;top:auto;margin:0;max-height:86vh;overflow:auto;border-radius:16px 16px 0 0;transform:translateY(106%);transition:transform .25s ease;z-index:60;box-shadow:0 -8px 30px rgba(20,20,50,.28)}
+    .cart.open{transform:none}
+    .cart .ch{position:sticky;top:0;z-index:2}
+    .cart-close{display:inline-block}
+    .cart-backdrop{display:block;position:fixed;inset:0;background:rgba(15,15,40,.45);z-index:55;opacity:0;pointer-events:none;transition:opacity .25s}
+    .cart-backdrop.open{opacity:1;pointer-events:auto}
+    .fab{display:flex;align-items:center;gap:8px;position:fixed;right:16px;bottom:16px;z-index:58;background:var(--brand);color:#fff;border:0;border-radius:999px;padding:13px 18px;font-size:15px;font-weight:700;box-shadow:0 6px 20px rgba(91,61,245,.45);cursor:pointer}
+    .fab b{background:#fff;color:var(--brand);border-radius:999px;padding:0 8px;font-size:13px}
+    header{padding:9px 14px} header h1{font-size:14px} .sub{display:none}
+    .toolbar{padding:8px 14px}
+  }
 </style>
 </head>
 <body>
+<div class="topbar">
 <header>
   <div>
     <h1>TAK12 · Tra cứu kiến thức &amp; Giao bài nhanh</h1>
@@ -106,19 +150,20 @@
     <select id="dsSelect"></select>
   </div>
 </header>
+<div class="toolbar-wrap"><div class="toolbar">
+  <div class="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="q" type="search" placeholder="Tìm theo tên bài, chủ đề ngữ pháp, kỹ năng..." />
+  </div>
+  <div class="seg" id="viewSeg">
+    <button data-v="list" class="on">Danh sách</button>
+    <button data-v="unit">Xem theo Unit</button>
+  </div>
+  <button class="btn ghost" id="clearFilters">Xoá lọc</button>
+</div></div>
+</div>
 
 <div class="wrap">
-  <div class="toolbar">
-    <div class="search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input id="q" type="search" placeholder="Tìm theo tên bài, chủ đề ngữ pháp, kỹ năng..." />
-    </div>
-    <div class="seg" id="viewSeg">
-      <button data-v="list" class="on">Danh sách</button>
-      <button data-v="unit">Xem theo Unit</button>
-    </div>
-    <button class="btn ghost" id="clearFilters">Xoá lọc</button>
-  </div>
 
   <div class="filters" id="filters"></div>
 
@@ -132,19 +177,9 @@
     </div>
 
     <aside class="cart">
-      <div class="ch">🛒 Giỏ giao bài: <b id="cartN">0</b> bài <button class="btn ghost x" id="cartClear">Xoá giỏ</button></div>
-      <div class="settings">
-        <div><label>Ngày giao</label><input type="date" id="sStart"></div>
-        <div><label>Hạn nộp</label><input type="date" id="sDue"></div>
-        <div class="full"><label>Giao hạn hoàn thành (By Date)</label>
-          <select id="sByDate"><option value="">— (để trống)</option><option value="Yes">Yes (có hạn theo ngày)</option><option value="No">No</option></select>
-        </div>
-        <div class="full quickfill"><label>Áp nhanh Số câu (Min Question) cho mọi bài</label>
-          <div class="qf-row"><input type="number" id="qfMin" min="0" placeholder="vd 30"><button class="btn" id="qfApply">Áp tất cả</button></div>
-          <div class="qf-note">Master Level mặc định = 0; sửa riêng từng bài ở danh sách dưới.</div>
-        </div>
-      </div>
-      <div class="citems" id="cartItems"><div class="empty">Chưa chọn bài nào.<br>Tích chọn ở danh sách bên trái.</div></div>
+      <div class="ch">🛒 Giỏ giao bài: <b id="cartN">0</b> bài · <b id="sesN">1</b> phiên <button class="btn ghost x" id="cartClear">Xoá giỏ</button><button class="btn ghost cart-close" id="cartClose">✕ Đóng</button></div>
+      <div id="sessions"></div>
+
       <div class="actions">
         <button class="btn primary" id="exportXlsx">⬇ Tải Excel import (.xlsx)</button>
         <button class="btn" id="copyLinks">📋 Copy danh sách link</button>
@@ -157,6 +192,9 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="cart-backdrop" id="cartBackdrop"></div>
+<button class="fab" id="fab">🛒 Giỏ <b id="fabN">0</b></button>
+<button class="totop" id="toTop" title="Lên đầu trang" aria-label="Lên đầu trang">↑</button>
 
 <script>
 // ====== DATA (được build.mjs nhúng) ======
@@ -172,10 +210,16 @@ function catOf(it){ return it.type==='quiz' ? (it.areas.includes('Luyện đề 
 let DS = DATASETS[0];
 let view = 'list';
 const filters = { q:'', units:new Set(), skills:new Set(), types:new Set(), areas:new Set(), exams:new Set(), free:new Set() };
-const cart = new Map();                  // giỏ CHUNG mọi chương trình; key = "<dsId>::<itemKey>" để không trùng ID /t/ giữa các khối
+// Giỏ = nhiều PHIÊN giao bài; mỗi phiên có ngày giao/hạn nộp riêng + tập bài.
+// Bài key = "<dsId>::<itemKey>" để không trùng ID /t/ giữa các khối. Tích bài -> vào phiên đang chọn.
+let _sid=0;
+const todayStr = () => { const d=new Date(), p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); };
+const newSession = () => ({ id:'S'+(++_sid), start:todayStr(), due:'', byDate:'', items:new Map() }); // Ngày giao mặc định = hôm nay, vẫn sửa được
+const sessions = [ newSession() ];
+let activeSid = sessions[0].id;
 const cartKey = it => DS.id + '::' + it.key;
-const batch = { start:'', due:'', byDate:'' };
-let defMin=''; // Số câu mặc định khi thêm bài mới (lấy từ ô "Áp nhanh")
+const actSes = () => sessions.find(s=>s.id===activeSid) || sessions[0];
+const totalItems = () => sessions.reduce((n,s)=>n+s.items.size,0);
 
 // ====== Helpers ======
 const $ = (s,r=document)=>r.querySelector(s);
@@ -257,9 +301,9 @@ function itemMeta(it){
 }
 
 function itemRow(it){
-  const k = cartKey(it);
-  const row = el('div','item'+(cart.has(k)?' sel':''));
-  const cb = el('input'); cb.type='checkbox'; cb.checked=cart.has(k);
+  const k = cartKey(it), inCart = actSes().items.has(k);
+  const row = el('div','item'+(inCart?' sel':''));
+  const cb = el('input'); cb.type='checkbox'; cb.checked=inCart;
   cb.onchange=()=>{ toggle(it); };
   const body = el('div','body');
   body.innerHTML = '<div class="title">'+badge(catOf(it))+' '+esc(it.title)+'</div><div class="meta">'+itemMeta(it)+'</div>';
@@ -306,38 +350,73 @@ function render(){
 }
 
 // ====== Cart ======
-function toggle(it){ const k=cartKey(it); if(cart.has(k))cart.delete(k); else cart.set(k,{item:it,dsId:DS.id,dsLabel:DS.label,min:defMin,master:'0'}); render(); }
+function toggle(it){ const s=actSes(), k=cartKey(it); if(s.items.has(k)){ s.items.delete(k); render(); toast('Đã bỏ khỏi giỏ'); } else { s.items.set(k,{item:it,dsId:DS.id,dsLabel:DS.label,min:'',master:'0'}); render(); toast('＋ Đã thêm vào giỏ ('+totalItems()+' bài)'); } }
 function renderCart(){
-  $('#cartN').textContent = cart.size;
-  const host = $('#cartItems'); host.innerHTML='';
-  if(!cart.size){ host.appendChild(el('div','empty','Chưa chọn bài nào.<br>Tích chọn ở danh sách bên trái.')); return; }
-  // gom theo chương trình (giỏ chung mọi chương trình)
-  const groups=new Map();
-  for(const e of cart){ const v=e[1], g=v.dsLabel||v.dsId||'—'; if(!groups.has(g))groups.set(g,[]); groups.get(g).push(e); }
-  for(const [label,entries] of groups){
-    if(groups.size>1) host.appendChild(el('div','cgrp', esc(label)+' · '+entries.length+' bài'));
-    for(const [key,v] of entries){
-      const it=v.item;
-      const c = el('div','citem');
-      c.innerHTML = '<div class="ctop"><div class="t">'+badge(catOf(it))+' '+esc(it.title)+'</div><button class="rm" title="Bỏ">×</button></div>'+
-        '<div class="cfg"><label>Số câu <input type="number" class="cmin" min="0" value="'+esc(v.min)+'" placeholder="—"></label>'+
-        '<label>Master <input type="number" class="cmaster" min="0" value="'+esc(v.master)+'" placeholder="0"></label></div>';
-      c.querySelector('.rm').onclick=()=>{ cart.delete(key); render(); };
-      const minI=c.querySelector('.cmin'), masI=c.querySelector('.cmaster');
-      minI.oninput=()=>{ v.min=minI.value; };
-      masI.oninput=()=>{ v.master=masI.value; };
-      host.appendChild(c);
+  $('#cartN').textContent = totalItems();
+  { const fn=$('#fabN'); if(fn) fn.textContent = totalItems(); }
+  $('#sesN').textContent = sessions.length;
+  const host = $('#sessions'); host.innerHTML='';
+  // ----- dải tab phiên (kiểu Chrome) -----
+  const tabs = el('div','ses-tabs');
+  sessions.forEach((s,idx)=>{
+    const t = el('button','ses-tab'+(s.id===activeSid?' act':''));
+    t.appendChild(el('span',null,'Phiên '+(idx+1)));
+    t.appendChild(el('span','cnt',String(s.items.size)));
+    if(sessions.length>1){ const x=el('span','tx','×'); x.title='Xoá phiên';
+      x.onclick=(e)=>{ e.stopPropagation(); sessions.splice(idx,1); if(!sessions.find(z=>z.id===activeSid)) activeSid=sessions[Math.min(idx,sessions.length-1)].id; render(); };
+      t.appendChild(x); }
+    t.onclick=()=>{ activeSid=s.id; render(); };
+    tabs.appendChild(t);
+  });
+  const add=el('button','ses-addtab','＋ Phiên'); add.title='Thêm phiên giao bài';
+  add.onclick=()=>{ const s=newSession(); sessions.push(s); activeSid=s.id; render(); };
+  tabs.appendChild(add);
+  host.appendChild(tabs);
+  // ----- panel của phiên đang chọn -----
+  const s = actSes();
+  const panel = el('div','ses-panel');
+  const cfg = el('div','ses-cfg');
+  cfg.innerHTML = '<label>Ngày giao<input type="date" class="sStart" value="'+esc(s.start)+'"></label>'+
+    '<label>Hạn nộp<input type="date" class="sDue" value="'+esc(s.due)+'"></label>'+
+    '<label class="full">Giao hạn (By Date)<select class="sByDate"><option value="">— (để trống)</option><option value="Yes"'+(s.byDate==='Yes'?' selected':'')+'>Yes</option><option value="No"'+(s.byDate==='No'?' selected':'')+'>No</option></select></label>'+
+    '<div class="full qf2"><input type="number" class="sQf" min="0" placeholder="Áp Số câu cho cả phiên"><button class="btn sQfBtn">Áp</button></div>';
+  cfg.querySelector('.sStart').onchange=e=>s.start=e.target.value;
+  cfg.querySelector('.sDue').onchange=e=>s.due=e.target.value;
+  cfg.querySelector('.sByDate').onchange=e=>s.byDate=e.target.value;
+  const qf=cfg.querySelector('.sQf'); cfg.querySelector('.sQfBtn').onclick=()=>{ for(const v of s.items.values()) v.min=qf.value; renderCart(); toast('Đã áp Số câu cho phiên đang chọn'); };
+  panel.appendChild(cfg);
+  const body = el('div','ses-items');
+  if(!s.items.size){ body.appendChild(el('div','empty','Tích bài bên trái để thêm vào phiên này.')); }
+  else {
+    const groups=new Map();
+    for(const e of s.items){ const v=e[1], g=v.dsLabel||v.dsId||'—'; if(!groups.has(g))groups.set(g,[]); groups.get(g).push(e); }
+    for(const [label,entries] of groups){
+      if(groups.size>1) body.appendChild(el('div','cgrp', esc(label)+' · '+entries.length+' bài'));
+      for(const [key,v] of entries){
+        const it=v.item; const c=el('div','citem');
+        c.innerHTML = '<div class="ctop"><div class="t">'+badge(catOf(it))+' '+esc(it.title)+'</div><button class="rm" title="Bỏ">×</button></div>'+
+          '<div class="cfg"><label>Số câu <input type="number" class="cmin" min="0" value="'+esc(v.min)+'" placeholder="—"></label>'+
+          '<label>Master <input type="number" class="cmaster" min="0" value="'+esc(v.master)+'" placeholder="0"></label></div>';
+        c.querySelector('.rm').onclick=()=>{ s.items.delete(key); render(); };
+        const minI=c.querySelector('.cmin'), masI=c.querySelector('.cmaster');
+        minI.oninput=()=>{ v.min=minI.value; };
+        masI.oninput=()=>{ v.master=masI.value; };
+        body.appendChild(c);
+      }
     }
   }
+  panel.appendChild(body);
+  host.appendChild(panel);
 }
 
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1900); }
 
 // ====== Export: Copy links ======
 function copyLinks(){
-  if(!cart.size) return toast('Giỏ trống');
-  const txt=[...cart.values()].map(v=>v.item.url).join('\n');
-  navigator.clipboard?.writeText(txt).then(()=>toast('Đã copy '+cart.size+' link'),()=>fallbackCopy(txt));
+  const urls=[]; for(const s of sessions) for(const v of s.items.values()) urls.push(v.item.url);
+  if(!urls.length) return toast('Giỏ trống');
+  const txt=urls.join('\n');
+  navigator.clipboard?.writeText(txt).then(()=>toast('Đã copy '+urls.length+' link'),()=>fallbackCopy(txt));
 }
 function fallbackCopy(txt){ const ta=el('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');toast('Đã copy');}catch(e){toast('Không copy được');} ta.remove(); }
 
@@ -393,20 +472,18 @@ function makeXlsx(rows){
   return zipStore(files);
 }
 function exportXlsx(){
-  if(!cart.size) return toast('Giỏ trống');
+  const total=totalItems(); if(!total) return toast('Giỏ trống');
   const head=['Title','URL','Start Date','Due Date','Min Question','Master Level','Progress','By Date'];
-  const rows=[head];
-  for(const v of cart.values()){
-    rows.push([ v.item.title, v.item.url, batch.start, batch.due, v.min, v.master, '', batch.byDate ]);
-  }
+  const rows=[head]; const idSet=new Set();
+  for(const s of sessions){ for(const v of s.items.values()){ idSet.add(v.dsId); rows.push([ v.item.title, v.item.url, s.start, s.due, v.min, v.master, '', s.byDate ]); } }
   const bytes=makeXlsx(rows);
   const blob=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
   const d=new Date(), p=n=>String(n).padStart(2,'0');
-  const ids=[...new Set([...cart.values()].map(v=>v.dsId).filter(Boolean))]; const tag=ids.length===1?ids[0]:('tong-hop-'+ids.length+'ct');
+  const ids=[...idSet].filter(Boolean); const tag=ids.length===1?ids[0]:('tong-hop-'+ids.length+'ct');
   const fn='giao-bai_'+tag+'_'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.xlsx';
   const a=el('a'); a.href=URL.createObjectURL(blob); a.download=fn; document.body.appendChild(a); a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
-  toast('Đã tải '+cart.size+' bài → '+fn);
+  toast('Đã tải '+total+' bài / '+sessions.length+' phiên → '+fn);
 }
 
 // ====== Wire up ======
@@ -418,19 +495,26 @@ function initDatasets(){
 $('#q').oninput=e=>{ filters.q=e.target.value.trim(); render(); };
 $('#viewSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b)return; view=b.dataset.v; [...$('#viewSeg').children].forEach(x=>x.classList.toggle('on',x===b)); render(); };
 $('#clearFilters').onclick=()=>{ filters.q=''; $('#q').value=''; ['units','skills','types','areas','exams','free'].forEach(k=>filters[k].clear()); render(); };
-$('#selAll').onclick=()=>{ DS.items.filter(passes).forEach(it=>{ const k=cartKey(it); if(!cart.has(k)) cart.set(k,{item:it,dsId:DS.id,dsLabel:DS.label,min:defMin,master:'0'}); }); render(); toast('Đã chọn tất cả đang hiển thị'); };
-$('#cartClear').onclick=()=>{ cart.clear(); render(); };
-$('#sStart').onchange=e=>batch.start=e.target.value;
-$('#sDue').onchange=e=>batch.due=e.target.value;
-$('#sByDate').onchange=e=>batch.byDate=e.target.value;
-$('#qfMin').oninput=e=>defMin=e.target.value;
-$('#qfApply').onclick=()=>{ if(!cart.size) return toast('Giỏ trống'); for(const v of cart.values()){ v.min=defMin; } renderCart(); toast('Đã áp Số câu='+(defMin||'(trống)')+' cho '+cart.size+' bài'); };
+$('#selAll').onclick=()=>{ const s=actSes(); DS.items.filter(passes).forEach(it=>{ const k=cartKey(it); if(!s.items.has(k)) s.items.set(k,{item:it,dsId:DS.id,dsLabel:DS.label,min:'',master:'0'}); }); render(); toast('Đã thêm tất cả vào phiên đang chọn'); };
+$('#cartClear').onclick=()=>{ sessions.length=0; sessions.push(newSession()); activeSid=sessions[0].id; render(); };
+const openCart=()=>{ $('.cart').classList.add('open'); $('#cartBackdrop').classList.add('open'); };
+const closeCart=()=>{ $('.cart').classList.remove('open'); $('#cartBackdrop').classList.remove('open'); };
+$('#fab').onclick=openCart; $('#cartClose').onclick=closeCart; $('#cartBackdrop').onclick=closeCart;
+
 $('#copyLinks').onclick=copyLinks;
 $('#exportXlsx').onclick=exportXlsx;
 $('#foot').textContent='Nguồn: TAK12 · AZVocab · YouTube. Công cụ chạy offline, dữ liệu nhúng sẵn trong file này.';
 
 initDatasets();
 render();
+// Đo chiều cao topbar -> đặt --topbar-h để giỏ (sticky) nằm ngay DƯỚI topbar, không bị che
+const setTopbarH=()=>document.documentElement.style.setProperty('--topbar-h', (($('.topbar')||{}).offsetHeight||80)+'px');
+setTopbarH(); window.addEventListener('resize', setTopbarH);
+// Nút "lên đầu trang": hiện khi cuộn xuống, bấm -> cuộn mượt về đầu
+const toTop=$('#toTop');
+const onScroll=()=>toTop.classList.toggle('show', window.scrollY>300);
+window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 </script>
 </body>
 </html>
